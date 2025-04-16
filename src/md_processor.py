@@ -33,12 +33,6 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter, text_type: TextT
 
     return new_nodes
 
-    
-def extract_markdown_images(text):
-    image_regex_match = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
-    matches = re.findall(image_regex_match, text)
-    return matches
-
 
 def split_nodes_image(old_nodes: list[TextNode]):
     new_nodes = []
@@ -73,9 +67,9 @@ def split_nodes_image(old_nodes: list[TextNode]):
     return new_nodes
 
 
-def extract_markdown_links(text):
-    link_regex_match = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
-    matches = re.findall(link_regex_match, text)
+def extract_markdown_images(text):
+    image_regex_match = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(image_regex_match, text)
     return matches
 
 
@@ -110,3 +104,9 @@ def split_nodes_link(old_nodes: list[TextNode]):
         new_nodes.append(TextNode(current_text, TextType.TEXT))
 
     return new_nodes
+
+
+def extract_markdown_links(text):
+    link_regex_match = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(link_regex_match, text)
+    return matches
