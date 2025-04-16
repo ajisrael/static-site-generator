@@ -1,10 +1,10 @@
 import unittest
 
-from md_processor import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+from inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
 from textnode import TextNode, TextType
 
 
-class TestMdProcessorSplitNodesDelimiter(unittest.TestCase):
+class TestInlineMarkdownSplitNodesDelimiter(unittest.TestCase):
     def test_split_nodes_delimiter_bold(self):
         node = TextNode("This is text with **bold text** in it", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
@@ -84,7 +84,7 @@ class TestMdProcessorSplitNodesDelimiter(unittest.TestCase):
             split_nodes_delimiter([node], "**", TextType.BOLD)
 
 
-class TestMdProcessorExtractMarkdownImages(unittest.TestCase):
+class TestInlineMarkdownExtractMarkdownImages(unittest.TestCase):
     def test_extract_markdown_images(self):
         text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
         img_tuple_list = extract_markdown_images(text)
@@ -92,7 +92,7 @@ class TestMdProcessorExtractMarkdownImages(unittest.TestCase):
         self.assertListEqual(img_tuple_list, expected_img_tuple_list)
 
 
-class TestMdProcessorExtractMarkdownLinks(unittest.TestCase):
+class TestInlineMarkdownExtractMarkdownLinks(unittest.TestCase):
     def test_extract_markdown_link(self):
         text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
         link_tuple_list = extract_markdown_links(text)
@@ -100,7 +100,7 @@ class TestMdProcessorExtractMarkdownLinks(unittest.TestCase):
         self.assertListEqual(link_tuple_list, expected_link_tuple_list)
 
 
-class TestMdProcessorSplitImages(unittest.TestCase):
+class TestInlineMarkdownSplitImages(unittest.TestCase):
     def test_split_images(self):
         node = TextNode(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
@@ -165,7 +165,7 @@ class TestMdProcessorSplitImages(unittest.TestCase):
         self.assertListEqual(new_nodes, expected_new_nodes)
 
 
-class TestMdProcessorSplitLinks(unittest.TestCase):
+class TestInlineMarkdownSplitLinks(unittest.TestCase):
     def test_split_links(self):
         node = TextNode(
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
@@ -227,7 +227,7 @@ class TestMdProcessorSplitLinks(unittest.TestCase):
         ]
         self.assertListEqual(new_nodes, expected_new_nodes)
 
-class TestMdProcessorTextToTextNodes(unittest.TestCase):
+class TestInlineMarkdownTextToTextNodes(unittest.TestCase):
     def test_text_to_textnodes(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         textnodes = text_to_textnodes(text)
