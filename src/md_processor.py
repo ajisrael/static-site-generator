@@ -59,7 +59,9 @@ def split_nodes_image(old_nodes: list[TextNode]):
             if len(splits) != 2:
                 raise Exception(f"Failed to parse image in markdown from text: {current_text}")
 
-            new_nodes.append(TextNode(splits[0], TextType.TEXT))
+            if splits[0] != "":
+                new_nodes.append(TextNode(splits[0], TextType.TEXT))
+
             new_nodes.append(TextNode(alt_text, TextType.IMAGE, img_url))
             current_text = splits[1]
 
@@ -70,8 +72,41 @@ def split_nodes_image(old_nodes: list[TextNode]):
 
     return new_nodes
 
+
 def extract_markdown_links(text):
     link_regex_match = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     matches = re.findall(link_regex_match, text)
     return matches
 
+
+def split_nodes_link(old_nodes: list[TextNode]):
+    new_nodes = []
+
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+
+        current_text = node.text
+        link_tuple_list = extract_markdown_links(current_text)
+
+        for link_tuple in link_tuple_list:
+            link_text = link_tuple[0]
+            link_url = link_tuple[1]
+            splits = current_text.split(f"[{link_text}]({link_url})")
+
+            if len(splits) != 2:
+                raise Exception(f"Failed to parse link in markdown from text: {current_text}")
+
+            if splits[0] != "":
+                new_nodes.append(TextNode(splits[0], TextType.TEXT))
+
+            new_nodes.append(TextNode(link_text, TextType.LINK, link_url))
+            current_text = splits[1]
+
+        if current_text == "":
+            continue
+
+        new_nodes.append(TextNode(current_text, TextType.TEXT))
+
+    return new_nodes
