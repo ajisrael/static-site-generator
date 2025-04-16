@@ -1,6 +1,6 @@
 import unittest
 
-from md_processor import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image
+from md_processor import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link
 from textnode import TextNode, TextType
 
 
@@ -114,5 +114,115 @@ class TestMdProcessorSplitImages(unittest.TestCase):
             TextNode(
                 "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
             ),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+        
+    def test_split_images_with_no_images(self):
+        node = TextNode(
+            "This text has no images",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        expected_new_nodes = [
+            TextNode("This text has no images", TextType.TEXT),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_images_with_image_at_start(self):
+        node = TextNode(
+            "![image](https://i.imgur.com/zjjcJKZ.png) there is an image at the start of this node",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected_new_nodes = [
+            TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+            TextNode(" there is an image at the start of this node", TextType.TEXT)
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_images_with_image_at_end(self):
+        node = TextNode(
+            "there is an image at the end of this node ![image](https://i.imgur.com/zjjcJKZ.png)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected_new_nodes = [
+            TextNode("there is an image at the end of this node ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_images_with_just_two_images(self):
+        node = TextNode(
+            "![image](https://i.imgur.com/zjjcJKZ.png)![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        expected_new_nodes = [
+            TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+            TextNode("second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+
+class TestMdProcessorSplitLinks(unittest.TestCase):
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        expected_new_nodes = [
+            TextNode("This is text with a link ", TextType.TEXT),
+            TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_links_with_no_links(self):
+        node = TextNode(
+            "This text has no links",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        expected_new_nodes = [
+            TextNode("This text has no links", TextType.TEXT),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_links_with_link_at_start(self):
+        node = TextNode(
+            "[link](https://www.boot.dev) there is an link at the start of this node",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected_new_nodes = [
+            TextNode("link", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" there is an link at the start of this node", TextType.TEXT)
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_links_with_link_at_end(self):
+        node = TextNode(
+            "there is an link at the end of this node [link](https://www.boot.dev)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected_new_nodes = [
+            TextNode("there is an link at the end of this node ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://www.boot.dev"),
+        ]
+        self.assertListEqual(new_nodes, expected_new_nodes)
+
+    def test_split_links_with_just_two_links(self):
+        node = TextNode(
+            "[link](https://www.boot.dev)[second link](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        expected_new_nodes = [
+            TextNode("link", TextType.LINK, "https://www.boot.dev"),
+            TextNode("second link", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
         ]
         self.assertListEqual(new_nodes, expected_new_nodes)
