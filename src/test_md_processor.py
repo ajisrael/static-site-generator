@@ -1,10 +1,10 @@
 import unittest
 
-from md_processor import split_nodes_delimiter
+from md_processor import extract_markdown_images, extract_markdown_links, split_nodes_delimiter
 from textnode import TextNode, TextType
 
 
-class TestMdProcessor(unittest.TestCase):
+class TestMdProcessorSplitNodesDelimiter(unittest.TestCase):
     def test_split_nodes_delimiter_bold(self):
         node = TextNode("This is text with **bold text** in it", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
@@ -82,3 +82,18 @@ class TestMdProcessor(unittest.TestCase):
         with self.assertRaises(Exception):
             node = TextNode("This is text with **invalid markdown_ in it", TextType.TEXT)
             split_nodes_delimiter([node], "**", TextType.BOLD)
+
+
+
+class TestMdProcessorExtractMarkdownImages(unittest.TestCase):
+    def test_extract_markdown_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        img_tuple_list = extract_markdown_images(text)
+        expected_img_tuple_list = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        self.assertEqual(img_tuple_list, expected_img_tuple_list)
+
+    def test_extract_markdown_link(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        link_tuple_list = extract_markdown_links(text)
+        expected_link_tuple_list = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertEqual(link_tuple_list, expected_link_tuple_list)
