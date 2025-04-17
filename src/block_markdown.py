@@ -1,6 +1,15 @@
 from enum import Enum
 from re import findall
 
+
+class BlockType(Enum):
+    PARAGRAPH = 'paragraph'
+    HEADING = 'heading'
+    CODE = 'code'
+    QUOTE = 'quote'
+    UNORDERED_LIST = 'unordered_list'
+    ORDERED_LIST = 'ordered_list'
+
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
     new_blocks = []
@@ -12,14 +21,6 @@ def markdown_to_blocks(markdown):
 
         new_blocks.append(block)
     return new_blocks
-
-class BlockType(Enum):
-    PARAGRAPH = 'paragraph'
-    HEADING = 'heading'
-    CODE = 'code'
-    QUOTE = 'quote'
-    UNORDERED_LIST = 'unordered_list'
-    ORDERED_LIST = 'ordered_list'
 
 def block_to_blocktype(block: str) -> BlockType:
     if is_heading(block):
