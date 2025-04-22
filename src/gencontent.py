@@ -1,3 +1,4 @@
+import os
 from block_markdown import markdown_to_html_node
 
 
@@ -24,3 +25,13 @@ def extract_title(markdown):
         if line.startswith("# "):
             return line.split("# ")[1].strip()
     raise Exception("Markdown should have title")
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for item in os.listdir(dir_path_content):
+        cur_path = os.path.join(dir_path_content, item)
+        dest_path = os.path.join(dest_dir_path, item)
+        if os.path.isfile(cur_path):
+            generate_page(cur_path, template_path, dest_path.replace(".md", ".html"))
+        else:
+            os.mkdir(dest_path)
+            generate_pages_recursive(cur_path, template_path, dest_path)
