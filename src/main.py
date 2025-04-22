@@ -1,9 +1,11 @@
-from textnode import TextNode, TextType
+from copystatic import copy_files
+
+dir_path_static = "./static"
+dir_path_public = "./public"
 
 
 def main():
-    text_node = TextNode('This is some anchor text', TextType.LINK, 'https://www.boot.dev')
-    print(text_node)
+    copy_files(dir_path_static, dir_path_public)
 
 
 main()
